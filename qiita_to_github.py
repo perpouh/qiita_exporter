@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# %%
 """Qiitaの記事をGitHubのマークダウンのファイルに出力する
 
 以下のことをおこなっています。
@@ -12,7 +14,7 @@ import re
 import urllib
 import os
 import qiita_api
-
+from datetime import datetime
 
 def fix_titlemiss(line):
     """タイトルタグのスペースの入れ忘れを修正します."""
@@ -63,17 +65,17 @@ def fix_image(dst_folder, line):
         return line
     for url in images:
         name = url.split("/")[-1]
-        download(url, dst_folder + '/image/' + name)
+        download(url, dst_folder + '/../.vuepress/public/assets/img/' + name)
         ix = line.find(url)
 
-        line = line.replace(url, '/image/' + name)
+        line = line.replace(url, '/blog/assets/img/' + name)
     return line
 
 
 def fix_mypage_link(github_url, line, dict_title):
     """自分の記事へのURLを修正する"""
     for url in dict_title.keys():
-        line = line.replace(url, github_url + '/' + dict_title[url] + '.md')
+        line = line.replace(url, github_url + 'qiita/' + dict_title[url] + '.html')
     return line
 
 
@@ -118,8 +120,6 @@ if __name__ == '__main__':
 
     if not os.path.exists(dst):
         os.mkdir(dst)
-    if not os.path.exists(dst + '/image'):
-        os.mkdir(dst + '/image')
 
     qiitaApi = qiita_api.QiitaApi(token)
 
@@ -131,4 +131,6 @@ if __name__ == '__main__':
     for i in items:
         text = fix_markdown(github_url, dst, i['body'], dict_title)
         with open(dst + '/' + i['title'] + '.md', 'w', encoding='utf-8') as md_file:
+            md_file.write("# " + i['title'] + "\n")
+            md_file.write("最終更新日:" + datetime.strptime(i['updated_at'], '%Y-%m-%dT%H:%M:%S+09:00').strftime('%Y年%m月%d日') + "\n\n")
             md_file.write(text)

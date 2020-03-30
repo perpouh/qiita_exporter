@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# %%
 """Qiita APIを操作する.
 
 QiitaAPIについては下記を参照してください。
@@ -23,7 +25,7 @@ class QiitaApi:
         result = []
         per_page = 100
         total_count, result = query_method(param, per_page, 1)
-        loop_count = math.ceil(int(total_count) / per_page)
+        loop_count = int(math.ceil(int(total_count) / per_page))
         for page in range(2, loop_count + 1):
             total_count, items = query_method(param, per_page, page)
             if not items:

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# %%
 """WORDPRESSの操作"""
 import json
 import os
